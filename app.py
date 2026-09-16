@@ -1283,30 +1283,10 @@ st.markdown(
 </style>
 
 <section class="hero">
-    <div class="hero-kicker">
-        <span class="hero-dot"></span>
-        INDIVIDUALIZED CLINICAL PREDICTION
-    </div>
-
-    <h1>
-        LDAR Risk Prediction<br>
-        & Individual Interpretation
-    </h1>
-
-    <div class="hero-description">
-        Estimate the individual probability of
-        <strong>LDAR ≥ 5.27</strong>
-        using seven preoperative clinical predictors and explore
-        how each variable contributes to the prediction with SHAP.
-    </div>
-
-    <div class="hero-tags">
-        <span class="hero-tag primary">● Individual Prediction</span>
-        <span class="hero-tag">7 Predictors</span>
-        <span class="hero-tag">SVM</span>
-        <span class="hero-tag">Kernel SHAP</span>
-        <span class="hero-tag">Explainable AI</span>
-    </div>
+<div class="hero-kicker"><span class="hero-dot"></span>INDIVIDUALIZED CLINICAL PREDICTION</div>
+<h1>LDAR Risk Prediction<br>&amp; Individual Interpretation</h1>
+<div class="hero-description">Estimate the individual probability of <strong>LDAR ≥ 5.27</strong> using seven preoperative clinical predictors and explore how each variable contributes to the prediction with SHAP.</div>
+<div class="hero-tags"><span class="hero-tag primary">● Individual Prediction</span><span class="hero-tag">7 Predictors</span><span class="hero-tag">SVM</span><span class="hero-tag">Kernel SHAP</span><span class="hero-tag">Explainable AI</span></div>
 </section>
 """,
     unsafe_allow_html=True,

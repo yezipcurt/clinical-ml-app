@@ -224,43 +224,128 @@ def make_waterfall_plot(result):
 
 
 # ============================================================
-# 4. 网页界面
+# 4. 网页界面：卡片、渐变配色与响应式排版
 # ============================================================
-st.title("LDAR风险预测与SHAP解释")
-st.write("输入7项术前指标，预测患者出现 **LDAR ≥ 5.27** 的概率。")
-st.caption("模型结局编码：LDAR ≥ 5.27 为1，LDAR < 5.27 为0。模型：SVM。")
+st.markdown("""
+<style>
+:root {color-scheme:light;}
+.stApp {background:radial-gradient(ellipse at 5% 18%,#edf2ff 0,transparent 45%),
+    radial-gradient(ellipse at 100% 75%,#e9f8f5 0,transparent 42%),#f6f8fc;color:#1b2947;}
+[data-testid="stHeader"] {background:rgba(246,248,252,.92);}
+.block-container {max-width:1420px;padding:5rem 2.2rem 2rem;}
+.stApp p,.stApp label {color:#344567;}
+.hero {position:relative;overflow:hidden;isolation:isolate;padding:32px 38px;
+    border-radius:24px;background:linear-gradient(115deg,#172b58 0%,#3e4388 54%,#5d53ae 100%);
+    box-shadow:0 16px 42px #283e7418;margin:0 0 22px;}
+.hero:after {content:"";position:absolute;z-index:-1;width:330px;height:330px;right:-50px;top:-135px;
+    border-radius:50%;border:52px solid #ffffff09;box-shadow:0 0 0 45px #ffffff04;}
+.eyebrow {color:#a5dcf0;font:600 11px/1.5 sans-serif;letter-spacing:2.7px;margin-bottom:10px;}
+.hero h1 {color:#fff!important;font-size:clamp(26px,3vw,38px);font-weight:750;letter-spacing:-.6px;
+    line-height:1.35;margin:0 0 10px;padding:0;}
+.hero p {color:#dce3f5!important;font-size:14px;line-height:1.9;margin:0 0 18px;}
+.chips {display:flex;flex-wrap:wrap;gap:9px;}
+.chip {font-size:12px;border-radius:30px;padding:6px 13px;background:#ffffff12;border:1px solid #ffffff20;color:#f2f4ff;}
+.chip.teal {background:#1ab5a32a;border-color:#61e7cf38;color:#b0ffeb;}
+.st-key-input_panel,.st-key-result_panel {background:#fff;border:1px solid #e8edf6;
+    border-radius:22px;padding:24px!important;box-shadow:0 8px 28px #263d6a07;}
+.panel-heading {display:flex;align-items:center;gap:12px;margin-bottom:5px;}
+.step-icon {width:35px;height:35px;display:grid;place-items:center;border-radius:11px;
+    font:700 14px sans-serif;color:#6354c1;background:#eeebff;flex-shrink:0;}
+.step-icon.teal {color:#138674;background:#e0f6f0;}
+.panel-heading h2 {margin:0;padding:0;font-size:20px;line-height:1.5;color:#1c2c4c;}
+.panel-subtitle {font-size:12px;line-height:1.8;color:#75829a;margin:3px 0 15px;}
+[data-testid="stForm"] {border:0!important;padding:0!important;}
+[data-testid="stNumberInput"] label p {font-size:12px!important;font-weight:600;color:#4b5872;}
+[data-testid="stNumberInput"] [data-baseweb="input"] {background:#f5f7fc;border-radius:10px;border:1px solid #e5eaf4;}
+[data-testid="stNumberInput"] input {color:#1d3054!important;font-size:15px;background:#f5f7fc;}
+[data-testid="stNumberInput"] button {color:#65718a;background:#f5f7fc;}
+[data-testid="stFormSubmitButton"] button {border:0!important;color:#fff!important;min-height:46px;
+    border-radius:12px;background:linear-gradient(105deg,#5456cf,#7770df)!important;
+    box-shadow:0 5px 14px #665dd52b;font-weight:650;transition:filter .2s;}
+[data-testid="stFormSubmitButton"] button p {color:#fff!important;}
+[data-testid="stFormSubmitButton"] button:hover {filter:brightness(1.08);}
+.field-note {font-size:11px;color:#8c96a8;line-height:1.8;margin:4px 0 9px;}
+.form-note {border-radius:12px;background:#f0f8f8;border:1px solid #dff0ec;padding:10px 13px;
+    color:#4c7c77;font-size:12px;line-height:1.8;margin-top:9px;}
+.empty {text-align:center;border-radius:18px;background:linear-gradient(150deg,#f7f7ff,#effaf9);
+    padding:27px 18px 25px;margin:5px 0 18px;}
+.empty-ring {width:112px;height:112px;margin:0 auto 18px;border:9px solid #e4e5fa;
+    border-top-color:#8a7fe3;border-right-color:#67c9ba;border-radius:50%;display:grid;place-items:center;
+    color:#7476ba;font-size:30px;font-weight:700;box-shadow:0 8px 24px #6463b610;}
+.empty h3 {font-size:18px;margin:0 0 8px;color:#344564;padding:0;}
+.empty p {font-size:13px;color:#7b86a0!important;margin:0;line-height:1.9;}
+.mini-grid {display:grid;grid-template-columns:repeat(3,1fr);gap:12px;}
+.mini {padding:16px 10px;border-radius:14px;background:#f4f1fe;text-align:center;}
+.mini:nth-child(2) {background:#eaf8f4;}.mini:nth-child(3) {background:#fff4ec;}
+.mini strong {display:block;font-size:20px;color:#6755b9;line-height:1.5;}
+.mini:nth-child(2) strong {color:#168776;}.mini:nth-child(3) strong {color:#b47739;}
+.mini span {font-size:11px;color:#6a7890;}
+.prob-card {display:flex;align-items:center;justify-content:space-between;gap:18px;padding:22px 24px;
+    border:1px solid #e3e2f8;background:linear-gradient(125deg,#f3f1ff,#f4faff);border-radius:18px;margin:6px 0 13px;}
+.prob-label {font-size:13px;color:#5a6084;}.prob-value {font-size:48px;font-weight:750;color:#5347b5;line-height:1.35;
+    letter-spacing:-1.5px;}.prob-value span {font-size:23px;margin-left:3px;}
+.prob-foot {font-size:11px;color:#8992aa;}
+.prob-ring {flex-shrink:0;width:90px;height:90px;border-radius:50%;display:grid;place-items:center;}
+.prob-ring-inner {width:71px;height:71px;border-radius:50%;background:#f6f7ff;display:grid;place-items:center;
+    font-size:13px;font-weight:600;color:#697295;}
+.secondary-grid {display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:10px;}
+.stat-card {background:#eff8f5;border:1px solid #def0e8;border-radius:13px;padding:13px 16px;}
+.stat-card.purple {background:#f7f5fd;border-color:#eae5f7;}
+.stat-card .label {font-size:11px;color:#7b8799;}.stat-card .value {font-size:16px;font-weight:650;color:#287b70;margin-top:5px;}
+.stat-card.purple .value {color:#7262a8;}
+.legend {display:flex;gap:20px;flex-wrap:wrap;margin:10px 0;font-size:11px;color:#718099;}
+.legend i {display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:6px;}
+.info-box {border-radius:12px;background:#f7f9fd;padding:12px 15px;margin:14px 0 0;color:#79869f;font-size:12px;line-height:1.9;}
+[data-testid="stTabs"] [role="tablist"] {gap:20px;border-bottom:1px solid #edf0f6;}
+[data-testid="stTabs"] [role="tab"] p {font-size:13px;font-weight:600;}
+[data-testid="stTabs"] [aria-selected="true"] p {color:#6755c4!important;}
+[data-testid="stDownloadButton"] button {border:1px solid #dedcf1;border-radius:10px;background:#faf9ff;min-height:40px;}
+[data-testid="stDownloadButton"] button p {color:#675998!important;font-size:12px;}
+[data-testid="stCaptionContainer"] p {font-size:11px!important;line-height:1.8;color:#8993a6;}
+.footer {display:flex;justify-content:space-between;gap:15px;flex-wrap:wrap;
+    color:#909ab0;font-size:11px;padding:20px 4px 0;border-top:1px solid #e5eaf2;margin-top:25px;}
+@media(max-width:760px) {
+    .block-container {padding:4.5rem 1rem 1.6rem;}.hero {padding:25px 22px;}.hero h1 {font-size:27px;}
+    .st-key-input_panel,.st-key-result_panel {padding:18px!important;}.prob-value {font-size:40px;}
+    .prob-card {padding:18px;}.mini-grid {gap:7px;}.chip {font-size:11px;padding:5px 10px;}
+}
+</style>
+<section class="hero">
+<div class="eyebrow">LDAR · INDIVIDUAL RISK ASSESSMENT</div>
+<h1>LDAR 风险预测与解释</h1>
+<p>通过 7 项临床指标，评估 LDAR ≥ 5.27 的概率，并查看各指标对本次预测的贡献。</p>
+<div class="chips"><span class="chip teal">● LDAR 风险预测</span>
+<span class="chip">7 项指标</span><span class="chip">SVM 模型</span>
+<span class="chip">SHAP 个体解释</span></div>
+</section>
+""", unsafe_allow_html=True)
 
-input_column, result_column = st.columns([1, 1.35], gap="large")
-
-with input_column:
-    st.subheader("输入患者指标")
-    st.caption("输入单位必须与模型训练数据使用的单位完全一致。")
-
+input_column, result_column = st.columns([1, 1.4], gap="medium")
+with input_column, st.container(key="input_panel"):
+    st.markdown('<div class="panel-heading"><span class="step-icon">01</span>'
+                '<h2>输入患者指标</h2></div><div class="panel-subtitle">'
+                '请使用与模型训练数据一致的单位。</div>', unsafe_allow_html=True)
     with st.form("prediction_form"):
         input_values = {}
-        for item in FEATURES:
-            input_values[item["name"]] = st.number_input(
-                item["label"],
-                min_value=0.0,
-                value=float(item["default"]),
-                step=float(item["step"]),
-                format="%.4f",
-                help=f"训练数据范围：{item['min']:g} 至 {item['max']:g}",
-            )
-
-        submitted = st.form_submit_button(
-            "开始预测",
-            type="primary",
-            width="stretch",
-        )
+        for row in range(0, len(FEATURES), 2):
+            fields = st.columns(2, gap="small")
+            for offset, item in enumerate(FEATURES[row:row + 2]):
+                with fields[offset]:
+                    input_values[item["name"]] = st.number_input(
+                        item["label"], min_value=0.0, value=float(item["default"]),
+                        step=float(item["step"]), format="%.2f", key=item["name"],
+                        help=f"训练数据范围：{item['min']:g} 至 {item['max']:g}",
+                    )
+        st.markdown('<div class="field-note">预填数值为演示示例，请替换为当前患者的实际指标。</div>', unsafe_allow_html=True)
+        submitted = st.form_submit_button("开始预测  →", type="primary", width="stretch")
+    st.markdown('<div class="form-note">每次提交后，将同步生成预测概率与 7 个指标的贡献解释。</div>', unsafe_allow_html=True)
+    st.caption("修改输入后请重新计算；结果区保留最近一次提交的结果。")
 
 if submitted:
-    # 先清除上一次结果，防止本次失败后仍显示旧患者结果。
     st.session_state.pop("latest_result", None)
     st.session_state.pop("latest_plot", None)
-
     try:
-        with st.spinner("正在计算预测概率和SHAP解释……"):
+        with st.spinner("正在计算预测概率和 SHAP 解释……"):
             latest_result = calculate_prediction(input_values)
             latest_plot = make_waterfall_plot(latest_result)
             st.session_state["latest_result"] = latest_result
@@ -268,87 +353,67 @@ if submitted:
     except Exception as error:
         st.error(f"本次预测失败：{error}")
 
-with result_column:
-    st.subheader("预测结果")
+with result_column, st.container(key="result_panel"):
+    st.markdown('<div class="panel-heading"><span class="step-icon teal">02</span>'
+                '<h2>预测与解释</h2></div><div class="panel-subtitle">'
+                '查看个体预测，以及每一项指标的影响。</div>', unsafe_allow_html=True)
     result = st.session_state.get("latest_result")
-
     if result is None:
-        st.info("填写左侧7项指标并点击“开始预测”。")
+        st.markdown('''<div class="empty"><div class="empty-ring">—</div>
+<h3>准备好，了解本次预测</h3><p>填写患者指标后，点击「开始预测」。<br>
+预测概率与 SHAP 贡献图将在这里呈现。</p></div>
+<div class="mini-grid"><div class="mini"><strong>7</strong><span>输入指标</span></div>
+<div class="mini"><strong>5.27</strong><span>LDAR 结局截断值</span></div>
+<div class="mini"><strong>SHAP</strong><span>逐项贡献解释</span></div></div>
+<div class="info-box">结局定义：LDAR ≥ 5.27 为 1，LDAR &lt; 5.27 为 0。<br>
+这里的 5.27 是 LDAR 的截断值，不是预测概率的分界线。</div>''', unsafe_allow_html=True)
     else:
+        probability_percent = result["probability"] * 100
+        class_text = "1 · LDAR ≥ 5.27" if result["predicted_class"] == 1 else "0 · LDAR < 5.27"
+        st.markdown(f'''<div class="prob-card"><div><div class="prob-label">LDAR ≥ 5.27 的预测概率</div>
+<div class="prob-value">{probability_percent:.2f}<span>%</span></div>
+<div class="prob-foot">基于最近一次提交的 7 项指标</div></div>
+<div class="prob-ring" style="background:conic-gradient(#7770dc 0% {probability_percent:.5f}%,#e3e5f5 {probability_percent:.5f}% 100%)">
+<div class="prob-ring-inner">预测概率</div></div></div>
+<div class="secondary-grid"><div class="stat-card"><div class="label">模型预测类别</div>
+<div class="value">{class_text.replace('<', '&lt;')}</div></div>
+<div class="stat-card purple"><div class="label">SHAP 参考概率</div>
+<div class="value">{result['baseline']:.2%}</div></div></div>''', unsafe_allow_html=True)
         if result["out_of_range"]:
-            st.warning(
-                "以下指标超出训练数据范围，预测可靠性尚未验证："
-                + "、".join(result["out_of_range"])
-            )
+            st.warning("以下指标超出训练数据范围：" + "、".join(result["out_of_range"]))
 
-        metric_1, metric_2 = st.columns(2)
-        metric_1.metric(
-            "LDAR ≥ 5.27的预测概率",
-            f"{result['probability']:.2%}",
-        )
-        metric_2.metric(
-            "模型预测类别",
-            "1（LDAR ≥ 5.27）"
-            if result["predicted_class"] == 1
-            else "0（LDAR < 5.27）",
-        )
-
-        st.caption(
-            "这里的5.27是定义临床结局的LDAR截断值，不是预测概率阈值。"
-        )
-
-        st.subheader("SHAP个体解释")
-        st.image(st.session_state["latest_plot"], width="stretch")
-        st.caption(
-            "红色指标提高LDAR ≥ 5.27的预测概率，蓝色指标降低该概率。"
-            "E[f(X)]是训练均值患者的共同参考概率。"
-        )
-
-        contribution_table = pd.DataFrame(
-            {
-                "指标": [item["label"] for item in FEATURES],
-                "患者值": [result["input_values"][name] for name in FEATURE_NAMES],
-                "SHAP贡献": result["shap_values"],
-                "概率变化（百分点）": result["shap_values"] * 100,
-            }
-        ).sort_values("SHAP贡献", key=np.abs, ascending=False)
-
-        st.dataframe(
-            contribution_table.style.format(
-                {
-                    "患者值": "{:.4f}",
-                    "SHAP贡献": "{:+.6f}",
-                    "概率变化（百分点）": "{:+.4f}",
-                }
-            ),
-            hide_index=True,
-            width="stretch",
-        )
+        chart_tab, table_tab, notes_tab = st.tabs(["贡献瀑布图", "指标明细", "如何阅读结果"])
+        contribution_table = pd.DataFrame({
+            "指标": [item["label"] for item in FEATURES],
+            "患者值": [result["input_values"][name] for name in FEATURE_NAMES],
+            "SHAP贡献": result["shap_values"],
+            "概率变化（百分点）": result["shap_values"] * 100,
+        }).sort_values("SHAP贡献", key=np.abs, ascending=False)
+        with chart_tab:
+            st.markdown('<div class="legend"><span><i style="background:#ff0051"></i>提高预测概率</span>'
+                        '<span><i style="background:#008bfb"></i>降低预测概率</span></div>', unsafe_allow_html=True)
+            st.image(st.session_state["latest_plot"], width="stretch")
+        with table_tab:
+            st.dataframe(contribution_table.style.format({
+                "患者值": "{:.4f}", "SHAP贡献": "{:+.6f}", "概率变化（百分点）": "{:+.4f}",
+            }), hide_index=True, width="stretch")
+        with notes_tab:
+            st.write("预测概率表示模型估计的 LDAR ≥ 5.27 的可能性；5.27 是结局定义阈值。")
+            st.write("模型类别取自 SVM 的判别结果。SVM 的类别判别与校准概率不一定以 50% 为共同边界。")
+            st.write("E[f(X)] 为训练均值患者的参考概率。它加上当前患者的全部 SHAP 贡献，得到本次预测概率。")
+            st.write("较小贡献在图中可能四舍五入为 0，详细数值可在指标明细或下载文件中查看。")
+            st.caption("SHAP 描述模型中的贡献，不代表因果关系。")
 
         export_table = contribution_table.copy()
         export_table["预测结局"] = OUTCOME_TEXT
         export_table["预测概率"] = result["probability"]
         export_table["预测类别"] = result["predicted_class"]
         export_table["SHAP基准概率"] = result["baseline"]
-
         download_1, download_2 = st.columns(2)
-        download_1.download_button(
-            "下载结果CSV",
-            export_table.to_csv(index=False).encode("utf-8-sig"),
-            file_name="LDAR_prediction_result.csv",
-            mime="text/csv",
-            width="stretch",
-        )
-        download_2.download_button(
-            "下载SHAP图片",
-            st.session_state["latest_plot"],
-            file_name="LDAR_SHAP_waterfall.png",
-            mime="image/png",
-            width="stretch",
-        )
+        download_1.download_button("↓ 下载结果 CSV", export_table.to_csv(index=False).encode("utf-8-sig"),
+                                   file_name="LDAR_prediction_result.csv", mime="text/csv", width="stretch")
+        download_2.download_button("↓ 下载 SHAP 图片", st.session_state["latest_plot"],
+                                   file_name="LDAR_SHAP_waterfall.png", mime="image/png", width="stretch")
 
-st.divider()
-st.caption(
-    "本工具用于研究展示，不能代替医生判断。请勿将可识别患者身份的信息输入公开网页。"
-)
-
+st.markdown('<div class="footer"><span>LDAR · 风险预测与个体解释</span>'
+            '<span>研究展示工具 · 预测结果需结合临床信息解读</span></div>', unsafe_allow_html=True)
